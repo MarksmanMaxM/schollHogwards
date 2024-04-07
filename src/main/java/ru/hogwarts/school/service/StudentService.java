@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 
 import java.util.Collections;
@@ -32,5 +33,15 @@ public class StudentService {
 
     public Object findAllStudents() {
         return Collections.unmodifiableCollection(Collections.singleton(students));
+    }
+
+    public HashMap<Long, Student> colorAge(int age) {
+        HashMap<Long, Student> studentsPerAge = new HashMap<>();
+        for (Long i: students.keySet()) {
+            if (students.get(i).getAge() == age) {
+                studentsPerAge.put((long) i, students.get(i));
+            }
+        }
+        return studentsPerAge;
     }
 }

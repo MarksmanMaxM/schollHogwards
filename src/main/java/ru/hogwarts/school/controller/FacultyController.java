@@ -1,16 +1,16 @@
 package ru.hogwarts.school.controller;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.service.FacultyService;
-import ru.hogwarts.school.service.FacultyService;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
-@RequestMapping("faculty")
+@RequestMapping("/faculty")
 @RestController
 public class FacultyController {
 
@@ -21,7 +21,7 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<Faculty> createFaculty(@RequestBody Faculty faculty) {
         Faculty createdFaculty = facultyService.createFaculty(faculty);
         return ResponseEntity.ok(createdFaculty);
@@ -45,7 +45,7 @@ public class FacultyController {
         return ResponseEntity.ok(updatedFaculty);
     }
 
-    @DeleteMapping
+    @DeleteMapping("{id}")
     public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
         Faculty deleteFaculty = facultyService.deleteFaculty(id);
         if (deleteFaculty == null) {
@@ -55,18 +55,29 @@ public class FacultyController {
     }
 
     @GetMapping("/color")
-    public ResponseEntity<HashMap<Long, Faculty>> getFacultyPerColor(@PathVariable String color) {
-        HashMap<Long, Faculty> faculties = (HashMap<Long, Faculty>) facultyService.findAllFaculties();
-        HashMap<Long, Faculty> facultiesPerColor = new HashMap<>();
-        for (int i = 0; i < faculties.size(); i++) {
-            if (faculties.get(i).getColor().equals(color)) {
-                facultiesPerColor.get(faculties.get(i));
-            }
-        }
+    public HashMap<Long, Faculty> find (String color) {
+        return facultyService.colorFind(color);
+    }
+//    public ResponseEntity<HashMap<Long, Faculty>> getFacultyPerColor(@PathVariable String color) {
+////        HashMap<Long, Faculty> faculties = new HashMap<>();
+////        faculties.putAll((Map<? extends Long, ? extends Faculty>) facultyService.findAllFaculties());
+////        faculties.putAll((Map<? extends Long, ? extends Faculty>) facultyService.findAllFaculties());
+////        HashMap<Long, Faculty> facultiesPerColor = new HashMap<>();
+////        for (Long i: faculties.keySet()) {
+////            if (faculties.get(i).getColor().equals(color)) {
+////                facultiesPerColor.put((long) i, faculties.get(i));
+////            }
+////        }
+//
+//        if (facultyService.colorFind(color) == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(facultyService.colorFind(color));
+//     }
 
-        if (facultiesPerColor == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(facultiesPerColor);
+
+    @GetMapping()
+    public Object getFaculties() {
+        return facultyService.findAllFaculties();
     }
 }
