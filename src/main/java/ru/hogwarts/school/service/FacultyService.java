@@ -2,42 +2,50 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.*;
 
 @Service
 public class FacultyService {
-    private HashMap<Long, Faculty> faculties = new HashMap<>();
-    private Long id = 0L;
+    private final FacultyRepository facultyRepository;
+
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
+    }
+
+
     public Faculty createFaculty(Faculty faculty) {
-        ++id;
-        this.faculties.put(id, faculty);
+         this.facultyRepository.save(faculty);
         return faculty;
     }
 
 
     public Faculty getFaculty(Long facultyId) {
-        return faculties.get(facultyId);
+        return facultyRepository.findById(facultyId).get();
     }
 
     public Faculty updateFaculty(Long facultyId, Faculty faculty) {
-        faculties.put(facultyId, faculty);
+        facultyRepository.save(faculty);
         return faculty;
     }
 
-    public Faculty deleteFaculty(Long facultyId) {
-        return faculties.remove(facultyId);
+    public void deleteFaculty(Long facultyId) {
+        facultyRepository.deleteById(facultyId);
     }
 
-    public Object findAllFaculties() {
-        return Collections.unmodifiableCollection(Collections.singleton(faculties));
+    public List<Faculty>  findAllFaculties() {
+        return facultyRepository.findAll();
     }
 
-    public HashMap<Long, Faculty> colorFind(String color) {
-        HashMap<Long, Faculty> facultiesPerColor = new HashMap<>();
-                for (Long i: faculties.keySet()) {
-            if (faculties.get(i).getColor().equals(color)) {
-                facultiesPerColor.put((long) i, faculties.get(i));
+    public List<Faculty> colorFind(String color) {
+
+        List<Faculty> facultiesPerColor = new ArrayList<>();
+        List<Faculty> faculties = findAllFaculties();
+        for (Faculty faculty : faculties) {
+            if (color.equals(faculty.getColor())) {
+                facultiesPerColor.add(faculty);
             }
         }
         return facultiesPerColor;

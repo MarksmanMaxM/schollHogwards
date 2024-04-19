@@ -1,18 +1,12 @@
 package ru.hogwarts.school.controller;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RequestMapping("/student")
 @RestController
@@ -49,12 +43,10 @@ public class StudentController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
-        Student deleteStudent = studentService.deleteStudent(id);
-        if (deleteStudent == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(deleteStudent);
+    public ResponseEntity deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
+
+        return ResponseEntity.ok().build();
     }
 
 //    @GetMapping("/age")
@@ -79,7 +71,12 @@ public class StudentController {
     }
 
     @GetMapping("/age")
-    public HashMap<Long, Student> find (int age) {
-        return studentService.colorAge(age);
+    public Object find (@RequestParam (name = "age") int age) {
+
+        if (studentService.colorAge(age) == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(studentService.colorAge(age));
+
     }
 }
