@@ -66,7 +66,7 @@ public class StudentController {
 //    }
 
     @GetMapping()
-    public Object getStudents() {
+    public List<Student> getStudents() {
         return studentService.findAllStudents();
     }
 

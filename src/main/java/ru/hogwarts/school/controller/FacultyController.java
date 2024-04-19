@@ -53,25 +53,9 @@ public class FacultyController {
     }
 
     @GetMapping("/color")
-    public List<Faculty> find (String color) {
+    public List<Faculty> find (@RequestParam (name = "color") String color) {
         return facultyService.colorFind(color);
     }
-//    public ResponseEntity<HashMap<Long, Faculty>> getFacultyPerColor(@PathVariable String color) {
-////        HashMap<Long, Faculty> faculties = new HashMap<>();
-////        faculties.putAll((Map<? extends Long, ? extends Faculty>) facultyService.findAllFaculties());
-////        faculties.putAll((Map<? extends Long, ? extends Faculty>) facultyService.findAllFaculties());
-////        HashMap<Long, Faculty> facultiesPerColor = new HashMap<>();
-////        for (Long i: faculties.keySet()) {
-////            if (faculties.get(i).getColor().equals(color)) {
-////                facultiesPerColor.put((long) i, faculties.get(i));
-////            }
-////        }
-//
-//        if (facultyService.colorFind(color) == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(facultyService.colorFind(color));
-//     }
 
 
     @GetMapping()
