@@ -5,6 +5,7 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -71,12 +72,14 @@ public class StudentController {
     }
 
     @GetMapping("/age")
-    public Object find (@RequestParam (name = "age") int age) {
+    public Collection find (@RequestParam (name = "age") int age) {
 
-        if (studentService.colorAge(age) == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(studentService.colorAge(age));
+
+        return studentService.colorAge(age);
+//        if (studentService.colorAge(age) == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(studentService.colorAge(age));
 
     }
 }
