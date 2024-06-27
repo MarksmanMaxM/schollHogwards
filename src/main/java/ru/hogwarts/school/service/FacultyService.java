@@ -51,4 +51,16 @@ public class FacultyService {
         return facultiesPerColor;
     }
 
+    public Faculty findByColorIgnoreCase(String color)
+    {
+
+        return facultyRepository.findByColorIgnoreCase(color);
+
+    }
+
+
+    public Faculty findByNameIgnoreCase(String name){
+         return facultyRepository.findByNameIgnoreCase(name);
+    }
+
 }

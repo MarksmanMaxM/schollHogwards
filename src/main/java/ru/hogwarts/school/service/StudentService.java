@@ -4,10 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class StudentService {
@@ -49,4 +46,15 @@ public class StudentService {
         }
         return studentsPerAge;
     }
+
+    public Collection<Student> findByAgeBetween(int min, int max) {
+        return studentRepository.findByAgeBetween(min, max);
+
+    }
+
+    public Student findByName(String name){
+
+        return studentRepository.findByName(name);
+    }
+
 }

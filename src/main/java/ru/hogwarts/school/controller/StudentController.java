@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -80,6 +81,29 @@ public class StudentController {
 //            return ResponseEntity.notFound().build();
 //        }
 //        return ResponseEntity.ok(studentService.colorAge(age));
+
+    }
+
+    @GetMapping("/age/minmax")
+    public Collection find (@RequestParam (required = false) int min,
+                            @RequestParam (required = false) int max) {
+
+        if(min > 0 && max < 100 && max > min)
+            return studentService.findByAgeBetween(min, max);
+
+        return null;
+//        if (studentService.colorAge(age) == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(studentService.colorAge(age));
+
+    }
+
+
+    @GetMapping("/faculty")
+    public String find (@RequestParam String name) {
+
+        return studentService.findByName(name).getFaculty().getName();
 
     }
 }
