@@ -1,16 +1,15 @@
 package ru.hogwarts.school.controller;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
-import ru.hogwarts.school.service.FacultyService;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-@RequestMapping("faculty")
+@RequestMapping("/faculty")
 @RestController
 public class FacultyController {
 
@@ -21,7 +20,7 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<Faculty> createFaculty(@RequestBody Faculty faculty) {
         Faculty createdFaculty = facultyService.createFaculty(faculty);
         return ResponseEntity.ok(createdFaculty);
@@ -45,28 +44,43 @@ public class FacultyController {
         return ResponseEntity.ok(updatedFaculty);
     }
 
-    @DeleteMapping
+    @DeleteMapping("{id}")
     public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
-        Faculty deleteFaculty = facultyService.deleteFaculty(id);
-        if (deleteFaculty == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(deleteFaculty);
+       facultyService.deleteFaculty(id);
+       return ResponseEntity.ok().build();
     }
 
     @GetMapping("/color")
-    public ResponseEntity<HashMap<Long, Faculty>> getFacultyPerColor(@PathVariable String color) {
-        HashMap<Long, Faculty> faculties = (HashMap<Long, Faculty>) facultyService.findAllFaculties();
-        HashMap<Long, Faculty> facultiesPerColor = new HashMap<>();
-        for (int i = 0; i < faculties.size(); i++) {
-            if (faculties.get(i).getColor().equals(color)) {
-                facultiesPerColor.get(faculties.get(i));
-            }
+    public List<Faculty> find (@RequestParam (name = "color") String color) {
+        return facultyService.colorFind(color);
+    }
+
+
+    @GetMapping()
+    public List<Faculty> getFaculties(@RequestParam (required = false) String color,
+                                      @RequestParam (required = false) String name) {
+        List<Faculty> list = new ArrayList<>();
+
+        if(color != null && !color.isBlank())
+        {
+            list.add(facultyService.findByColorIgnoreCase(color));
+            return list;
+
         }
 
-        if (facultiesPerColor == null) {
-            return ResponseEntity.notFound().build();
+        if(name != null && !name.isBlank())
+        {
+            list.add(facultyService.findByNameIgnoreCase(name));
+            return list;
+
         }
-        return ResponseEntity.ok(facultiesPerColor);
+
+        return facultyService.findAllFaculties();
     }
+
+    @GetMapping("/students")
+    public Collection<Student> findStudents (@RequestParam (name = "name") String name) {
+        return facultyService.findByNameIgnoreCase(name).getStudents();
+    }
+
 }
