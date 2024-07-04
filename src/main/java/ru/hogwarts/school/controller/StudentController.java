@@ -51,21 +51,7 @@ public class StudentController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("/age")
-//    public ResponseEntity<HashMap<Long, Student>> getStudentPerAge(@PathVariable int age) {
-//        HashMap<Long, Student> students = (HashMap<Long, Student>) studentService.findAllStudents();
-//        HashMap<Long, Student> studentsPerAge = new HashMap<>();
-//        for (int i = 0; i < students.size(); i++) {
-//            if (students.get(i).getAge() == age) {
-//                studentsPerAge.put((long) i, students.get(i));
-//            }
-//        }
-//
-//        if (studentsPerAge == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(studentsPerAge);
-//    }
+
 
     @GetMapping()
     public List<Student> getStudents() {
@@ -77,10 +63,7 @@ public class StudentController {
 
 
         return studentService.colorAge(age);
-//        if (studentService.colorAge(age) == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(studentService.colorAge(age));
+
 
     }
 
@@ -92,10 +75,7 @@ public class StudentController {
             return studentService.findByAgeBetween(min, max);
 
         return null;
-//        if (studentService.colorAge(age) == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(studentService.colorAge(age));
+
 
     }
 
