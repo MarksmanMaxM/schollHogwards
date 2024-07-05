@@ -2,6 +2,7 @@ package ru.hogwarts.school.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.jpa.domain.JpaSort;
+//import org.springframework.data.jpa.domain.JpaSort.Path;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,7 +47,8 @@ public class AvatarController {
     @GetMapping(value = "/{id}/avatar-from-file")
     public void downloadAvatar(@PathVariable Long id, HttpServletResponse response) throws IOException{
         Avatar avatar = avatarService.findAvatar(id).get();
-        JpaSort.Path path = (JpaSort.Path) Path.of(avatar.getFilePath());
+//        JpaSort.Path path = Path.of(avatar.getFilePath());
+        Path path = Path.of(avatar.getFilePath());
         try(InputStream is = Files.newInputStream((Path) path);
             OutputStream os = response.getOutputStream();) {
             response.setStatus(200);

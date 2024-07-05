@@ -1,5 +1,6 @@
 package ru.hogwarts.school.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,10 +17,11 @@ import java.util.Optional;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
+@Transactional
 public class AvatarService {
 
-    StudentRepository studentRepository;
-    AvatarRepository avatarRepository;
+    private final StudentRepository studentRepository;
+    private final AvatarRepository avatarRepository;
     @Value("${path.to.avatars.folder}")
     private String avatarsDir;
 
@@ -32,6 +34,7 @@ public class AvatarService {
 
 
         Student student = studentRepository.getById(studentId);
+
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -43,7 +46,7 @@ public class AvatarService {
         ) {
             bis.transferTo(bos);
         }
-        Avatar avatar = findAvatar(studentId).get();
+        Avatar avatar = findAvatar(studentId).orElse(new Avatar());
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
         avatar.setFileSize(avatarFile.getSize());

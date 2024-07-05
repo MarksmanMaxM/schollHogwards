@@ -6,9 +6,9 @@ import ru.hogwarts.school.model.Student;
 
 import java.util.Optional;
 
-public interface AvatarRepository extends JpaRepository<Student, Long> {
+public interface AvatarRepository extends JpaRepository<Avatar, Long> {
     Optional <Avatar> findByStudentId(Long id);
-    void save(Avatar avatar);
+
 
 
 }
