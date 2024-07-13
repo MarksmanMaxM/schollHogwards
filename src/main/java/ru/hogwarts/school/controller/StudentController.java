@@ -36,12 +36,12 @@ public class StudentController {
     }
 
     @PutMapping()
-    public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
-        Student updatedStudent = studentService.updateStudent(student.getId(), student);
-        if(updatedStudent == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedStudent);
+    public Student updateStudent(@RequestBody Student student) {
+        return studentService.updateStudent(student);
+//        if(updatedStudent == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(updatedStudent);
     }
 
     @DeleteMapping("{id}")

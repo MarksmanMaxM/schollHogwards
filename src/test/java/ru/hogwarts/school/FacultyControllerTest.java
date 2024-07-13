@@ -15,12 +15,14 @@ import ru.hogwarts.school.controller.FacultyController;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.AvatarService;
 import ru.hogwarts.school.service.FacultyService;
 import ru.hogwarts.school.service.StudentService;
 
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -41,6 +43,9 @@ public class FacultyControllerTest {
     private FacultyRepository facultyRepository;
     @MockBean
     private AvatarService avatarService;
+    @MockBean
+    StudentRepository studentRepository;
+
 
     @SpyBean
     private FacultyService facultyService;
@@ -60,7 +65,7 @@ public class FacultyControllerTest {
         faculty.setId(id);
         faculty.setName(name);
         faculty.setColor(color);
-        faculty.setStudents(students);
+        //faculty.setStudents(students);
 
         JSONObject facultyObject = new JSONObject();
         facultyObject.put("id", id);
@@ -71,6 +76,8 @@ public class FacultyControllerTest {
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
         when(facultyRepository.findByNameIgnoreCase(name)).thenReturn(faculty);
         when(facultyRepository.findByColorIgnoreCase(color)).thenReturn(faculty);
+        when(facultyRepository.findById(id)).thenReturn(Optional.of(faculty));
+        when(facultyRepository.findAll()).thenReturn(List.of(faculty));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/faculty")
                 .content(facultyObject.toString())
@@ -92,16 +99,14 @@ public class FacultyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value(name))
-                .andExpect(jsonPath("$.color").value(color))
-                .andExpect(jsonPath("$.students").value(students));
+                .andExpect(jsonPath("$.color").value(color));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/faculty/color" + color)
+        mockMvc.perform(MockMvcRequestBuilders.get("/faculty/color?color=" + color)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(id))
                 .andExpect(jsonPath("$[0].name").value(name))
-                .andExpect(jsonPath("$[0].color").value(color))
-                .andExpect(jsonPath("$[0].students").value(students));
+                .andExpect(jsonPath("$[0].color").value(color));
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/faculty/" + id)
                 .accept(MediaType.APPLICATION_JSON))

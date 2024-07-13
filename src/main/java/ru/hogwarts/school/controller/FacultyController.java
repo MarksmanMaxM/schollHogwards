@@ -70,7 +70,7 @@ public class FacultyController {
 
         if(name != null && !name.isBlank())
         {
-            list.add(facultyService.findByNameIgnoreCase(name));
+            list.add(facultyService.findByNameIgnoreCase1(name));
             return list;
 
         }
@@ -80,7 +80,7 @@ public class FacultyController {
 
     @GetMapping("/students")
     public Collection<Student> findStudents (@RequestParam (name = "name") String name) {
-        return facultyService.findByNameIgnoreCase(name).getStudents();
+        return facultyService.findByNameIgnoreCase(name);
     }
 
 }

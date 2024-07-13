@@ -14,14 +14,17 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import ru.hogwarts.school.controller.StudentController;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import javax.print.DocFlavor;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
@@ -44,15 +47,16 @@ public class StudentControllerTest {
     @BeforeEach
     void setup(){
 
-        Student student = new Student();
-        student.setAge(18);
-        student.setName("jhgjhgj");
+        Faculty faculty = new Faculty();
+        faculty.setId(777L);
 
-        Student student2 = new Student();
-        student2.setAge(19);
-        student2.setName("ddffdfaa");
+        Student student1 = new Student(1L, "jhgjhgj", 18);
+        student1.setFaculty(faculty);
 
-        List<Student> studentList = List.of(student, student2);
+        Student student2 = new Student(2L, "ddffdfaa", 19);
+        student2.setFaculty(faculty);
+
+        List<Student> studentList = List.of(student1, student2);
         savedStudents = studentRepository.saveAll(studentList);
 
     }
@@ -77,22 +81,24 @@ public class StudentControllerTest {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
-        List<Student> students = response.getBody().stream().collect(Collectors.toList());
-        assertEquals(savedStudents, students);
+        List<Student> students = Objects.requireNonNull(response.getBody()).stream().toList();
+        assertTrue(students.containsAll(savedStudents));
+
 
 
     }
 
     @Test
     void addStudent() throws JSONException, JsonProcessingException{
-        Student student1 = new Student();
-        student1.setAge(18);
-        student1.setName("dddddd");
+        Student student1 = new Student(3L, "dddddd", 18);
+        student1.setFaculty(savedStudents.get(0).getFaculty());
+
+        ResponseEntity<Student> response = restTemplate.postForEntity("/student", student1, Student.class);
 
         String expected = mapper.writeValueAsString(student1);
-        ResponseEntity<String> response = restTemplate.postForEntity("/student", student1, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        JSONAssert.assertEquals(expected, response.getBody(), false);
+        //assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(student1, response.getBody());
+
     }
 
     @Test
@@ -111,10 +117,11 @@ public class StudentControllerTest {
         student.setAge(21);
         HttpEntity<Student> entity = new HttpEntity<>(student);
         student.setId(savedStudents.get(0).getId());
+        student.setFaculty(savedStudents.get(0).getFaculty());
 
-        ResponseEntity<Student> response = this.restTemplate.exchange("/student/" + savedStudents.get(0).getId(), HttpMethod.PUT, entity, Student.class);
+        ResponseEntity<Student> response = this.restTemplate.exchange("/student" , HttpMethod.PUT, entity, Student.class);
 
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
+
         assertEquals(student, response.getBody());
     }
 

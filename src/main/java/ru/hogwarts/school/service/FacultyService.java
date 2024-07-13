@@ -4,21 +4,23 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.*;
 
 @Service
 public class FacultyService {
     private final FacultyRepository facultyRepository;
+    private final StudentRepository studentRepository;
 
-    public FacultyService(FacultyRepository facultyRepository) {
+    public FacultyService(FacultyRepository facultyRepository, StudentRepository studentRepository) {
         this.facultyRepository = facultyRepository;
+        this.studentRepository = studentRepository;
     }
 
 
     public Faculty createFaculty(Faculty faculty) {
-         this.facultyRepository.save(faculty);
-        return faculty;
+        return facultyRepository.save(faculty);
     }
 
 
@@ -27,6 +29,7 @@ public class FacultyService {
     }
 
     public Faculty updateFaculty(Long facultyId, Faculty faculty) {
+
         facultyRepository.save(faculty);
         return faculty;
     }
@@ -59,8 +62,12 @@ public class FacultyService {
     }
 
 
-    public Faculty findByNameIgnoreCase(String name){
-         return facultyRepository.findByNameIgnoreCase(name);
+    public Collection<Student> findByNameIgnoreCase(String name){
+         return studentRepository.findAllByFaculty_Name(name);
+    }
+
+    public Faculty findByNameIgnoreCase1(String name){
+        return facultyRepository.findByNameIgnoreCase(name);
     }
 
 }
