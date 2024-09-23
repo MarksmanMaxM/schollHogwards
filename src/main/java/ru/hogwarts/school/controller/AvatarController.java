@@ -58,4 +58,11 @@ public class AvatarController {
         }
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<Collection<Avatar>> getAll(@RequestParam("page") Integer page,
+                                                            @RequestParam("size") Integer size)
+    {
+        Collection<Avatar> allAvatars = avatarService.getAll(page, size);
+        return ResponseEntity.ok(allAvatars);
+    }
 }

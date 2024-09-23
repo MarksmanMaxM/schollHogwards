@@ -71,4 +71,19 @@ public class StudentService {
         return studentRepository.findByName(name);
     }
 
+    public int getCountByStudent()
+    {
+        return studentRepository.getCountByStudent();
+    }
+
+    public int getAvrAgeByStudent()
+    {
+        return studentRepository.getAvrAgeByStudent();
+    }
+
+    public List<Student> getLastFiveStudents()
+    {
+        return studentRepository.getLastFiveStudents();
+    }
+
 }

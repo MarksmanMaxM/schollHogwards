@@ -86,4 +86,22 @@ public class StudentController {
         return studentService.findByName(name).getFaculty().getName();
 
     }
+
+    @GetMapping("/studentcount")
+    public String getStudentCount()
+    {
+        return Integer.toString(studentService.getCountByStudent());
+    }
+
+    @GetMapping("/avrage")
+    public String getStudentAvrAge()
+    {
+        return Integer.toString(studentService.getAvrAgeByStudent());
+    }
+
+    @GetMapping("/fivestudents")
+    public List<Student> getLastFiveStudents()
+    {
+        return studentService.getLastFiveStudents();
+    }
 }
