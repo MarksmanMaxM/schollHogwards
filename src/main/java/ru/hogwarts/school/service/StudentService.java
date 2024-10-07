@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -13,6 +15,7 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
     private final FacultyRepository facultyRepository;
+    Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository) {
         this.studentRepository = studentRepository;
@@ -20,10 +23,12 @@ public class StudentService {
     }
 
     public Student createStudent(Student student) {
+        logger.info("CreateStudent ran");
         return studentRepository.save(student);
     }
 
     public Student getStudent(Long studentId) {
+        logger.info("getStudent ran");
         return studentRepository.findById(studentId).get();
     }
 
@@ -37,16 +42,19 @@ public class StudentService {
             oldStudent.setFaculty(faculty);
         }
 
+        logger.debug("updateStudent ran");
 
         return studentRepository.save(oldStudent);
     }
 
     public void deleteStudent(Long studentId) {
         studentRepository.deleteById(studentId);
+        logger.debug("deleteStudent complete");
     }
 
 
     public List<Student> findAllStudents() {
+        logger.warn("All students were found");
         return studentRepository.findAll();
     }
 
@@ -58,6 +66,8 @@ public class StudentService {
                 studentsPerAge.add(student);
             }
         }
+
+        logger.info("Students were found by age");
         return studentsPerAge;
     }
 
