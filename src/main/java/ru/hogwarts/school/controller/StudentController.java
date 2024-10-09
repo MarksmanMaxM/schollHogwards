@@ -6,9 +6,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @RequestMapping("/student")
 @RestController
@@ -104,4 +102,30 @@ public class StudentController {
     {
         return studentService.getLastFiveStudents();
     }
+
+    @GetMapping("/sorted_A")
+    public List<String> getAllStudentsNameA()
+    {
+        List <String> listMames = new ArrayList<>();
+        List <Student> allStudents = studentService.findAllStudents();
+        listMames = allStudents.stream()
+                .map(e -> e.getName().toUpperCase())
+                .filter(n -> n.startsWith("A"))
+                .sorted()
+                .toList();
+
+        return listMames;
+    }
+
+    @GetMapping("/avr_age")
+    public OptionalDouble getAllStudentsAvrAge()
+    {
+        List <Student> allStudents = studentService.findAllStudents();
+        OptionalDouble avrAge = allStudents.stream()
+                .map(e -> e.getAge())
+                .mapToInt(Integer::intValue).average();
+
+        return avrAge;
+    }
+
 }

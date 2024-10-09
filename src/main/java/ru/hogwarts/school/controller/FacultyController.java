@@ -8,6 +8,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @RequestMapping("/faculty")
 @RestController
@@ -81,6 +82,30 @@ public class FacultyController {
     @GetMapping("/students")
     public Collection<Student> findStudents (@RequestParam (name = "name") String name) {
         return facultyService.findByNameIgnoreCase(name);
+    }
+
+    @GetMapping("/longnamefaculty")
+    public String longNameFaculty () {
+        List <Faculty> listFaculties = facultyService.findAllFaculties();
+        List <String> namesFaculties = new ArrayList<>();
+        namesFaculties = listFaculties.stream()
+                .map(Faculty::getName)
+                .toList();
+
+        String max = Collections.max(namesFaculties, Comparator.comparing(s -> s.length()));
+
+        return max;
+    }
+
+    @GetMapping("/sum_res")
+    public Integer sumRes ()
+    {
+        int sum = Stream.iterate(1, a -> a +1)
+                .parallel()
+                .limit(1_000_000)
+                .reduce(0, (a, b) -> a + b );
+
+        return sum;
     }
 
 }
