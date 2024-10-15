@@ -128,4 +128,35 @@ public class StudentController {
         return avrAge;
     }
 
+
+    @GetMapping("/print-parallel")
+    public void printParallelStudents()
+    {
+        List <Student> allStudents = studentService.findAllStudents();
+        System.out.println(allStudents.get(0).getName());
+        System.out.println(allStudents.get(1).getName());
+
+        new Thread(() ->{
+            System.out.println(allStudents.get(2).getName());
+            System.out.println(allStudents.get(3).getName());
+        }).start();
+
+        new Thread(() ->{
+            System.out.println(allStudents.get(4).getName());
+            System.out.println(allStudents.get(5).getName());
+        }).start();
+
+    }
+
+    @GetMapping("/print-synchronized")
+    public void printParallelSynchronizedStudents(){
+        List <Student> allStudents = studentService.findAllStudents();
+
+        for(int i = 0; i < allStudents.size(); i++) {
+            studentService.printSynchronized(allStudents.get(i).getName());
+        }
+
+
+    }
+
 }

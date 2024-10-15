@@ -13,6 +13,7 @@ import java.util.*;
 @Service
 public class StudentService {
 
+    public Object flag = new Object();
     private final StudentRepository studentRepository;
     private final FacultyRepository facultyRepository;
     Logger logger = LoggerFactory.getLogger(StudentService.class);
@@ -96,4 +97,9 @@ public class StudentService {
         return studentRepository.getLastFiveStudents();
     }
 
+    public void printSynchronized(String name){
+       synchronized (flag) {
+           System.out.println(name);
+       }
+    }
 }
