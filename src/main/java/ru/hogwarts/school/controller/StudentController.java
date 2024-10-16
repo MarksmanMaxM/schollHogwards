@@ -152,9 +152,20 @@ public class StudentController {
     public void printParallelSynchronizedStudents(){
         List <Student> allStudents = studentService.findAllStudents();
 
-        for(int i = 0; i < allStudents.size(); i++) {
+        new Thread(() ->{
+            for(int i = 0; i < allStudents.size(); i++) {
+                if(i%2 != 0)
+                {
+                    studentService.printSynchronized(allStudents.get(i).getName());
+                }
+            }
+        }).start();
+
+        new Thread(() ->{
+            for(int i = 0; i < allStudents.size(); i=i+2) {
             studentService.printSynchronized(allStudents.get(i).getName());
-        }
+         }
+        }).start();
 
 
     }
