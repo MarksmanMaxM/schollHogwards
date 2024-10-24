@@ -1,14 +1,14 @@
 package ru.hogwarts.school.controller;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.HashMap;
+import java.util.*;
 
-@RequestMapping("student")
+@RequestMapping("/student")
 @RestController
 public class StudentController {
     private final StudentService studentService;
@@ -18,7 +18,7 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<Student> createStudent(@RequestBody Student student) {
         Student createdStudent = studentService.createStudent(student);
         return ResponseEntity.ok(createdStudent);
@@ -34,36 +34,140 @@ public class StudentController {
     }
 
     @PutMapping()
-    public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
-        Student updatedStudent = studentService.updateStudent(student.getId(), student);
-        if(updatedStudent == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedStudent);
+    public Student updateStudent(@RequestBody Student student) {
+        return studentService.updateStudent(student);
+//        if(updatedStudent == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(updatedStudent);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
-        Student deleteStudent = studentService.deleteStudent(id);
-        if (deleteStudent == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(deleteStudent);
+    @DeleteMapping("{id}")
+    public ResponseEntity deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+
+
+    @GetMapping()
+    public List<Student> getStudents() {
+        return studentService.findAllStudents();
     }
 
     @GetMapping("/age")
-    public ResponseEntity<HashMap<Long, Student>> getStudentPerAge(@PathVariable int age) {
-        HashMap<Long, Student> students = (HashMap<Long, Student>) studentService.findAllStudents();
-        HashMap<Long, Student> studentsPerAge = new HashMap<>();
-        for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).getAge() == age) {
-                studentsPerAge.get(students.get(i));
-            }
-        }
+    public Collection find (@RequestParam (name = "age") int age) {
 
-        if (studentsPerAge == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(studentsPerAge);
+
+        return studentService.colorAge(age);
+
+
     }
+
+    @GetMapping("/age/minmax")
+    public Collection find (@RequestParam (required = false) int min,
+                            @RequestParam (required = false) int max) {
+
+        if(min > 0 && max < 100 && max > min)
+            return studentService.findByAgeBetween(min, max);
+
+        return null;
+
+
+    }
+
+
+    @GetMapping("/faculty")
+    public String find (@RequestParam String name) {
+
+        return studentService.findByName(name).getFaculty().getName();
+
+    }
+
+    @GetMapping("/studentcount")
+    public String getStudentCount()
+    {
+        return Integer.toString(studentService.getCountByStudent());
+    }
+
+    @GetMapping("/avrage")
+    public String getStudentAvrAge()
+    {
+        return Integer.toString(studentService.getAvrAgeByStudent());
+    }
+
+    @GetMapping("/fivestudents")
+    public List<Student> getLastFiveStudents()
+    {
+        return studentService.getLastFiveStudents();
+    }
+
+    @GetMapping("/sorted_A")
+    public List<String> getAllStudentsNameA()
+    {
+        List <String> listMames = new ArrayList<>();
+        List <Student> allStudents = studentService.findAllStudents();
+        listMames = allStudents.stream()
+                .map(e -> e.getName().toUpperCase())
+                .filter(n -> n.startsWith("A"))
+                .sorted()
+                .toList();
+
+        return listMames;
+    }
+
+    @GetMapping("/avr_age")
+    public OptionalDouble getAllStudentsAvrAge()
+    {
+        List <Student> allStudents = studentService.findAllStudents();
+        OptionalDouble avrAge = allStudents.stream()
+                .map(e -> e.getAge())
+                .mapToInt(Integer::intValue).average();
+
+        return avrAge;
+    }
+
+
+    @GetMapping("/print-parallel")
+    public void printParallelStudents()
+    {
+        List <Student> allStudents = studentService.findAllStudents();
+        System.out.println(allStudents.get(0).getName());
+        System.out.println(allStudents.get(1).getName());
+
+        new Thread(() ->{
+            System.out.println(allStudents.get(2).getName());
+            System.out.println(allStudents.get(3).getName());
+        }).start();
+
+        new Thread(() ->{
+            System.out.println(allStudents.get(4).getName());
+            System.out.println(allStudents.get(5).getName());
+        }).start();
+
+    }
+
+    @GetMapping("/print-synchronized")
+    public void printParallelSynchronizedStudents(){
+        List <Student> allStudents = studentService.findAllStudents();
+
+        new Thread(() ->{
+            studentService.printSynchronized(allStudents.get(0).getName());
+            studentService.printSynchronized(allStudents.get(1).getName());
+          }).start();
+
+        new Thread(() ->{
+            studentService.printSynchronized(allStudents.get(2).getName());
+            studentService.printSynchronized(allStudents.get(3).getName());
+        }).start();
+
+        new Thread(() ->{
+            studentService.printSynchronized(allStudents.get(4).getName());
+            studentService.printSynchronized(allStudents.get(5).getName());
+        }).start();
+
+
+    }
+
 }
