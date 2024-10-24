@@ -153,18 +153,18 @@ public class StudentController {
         List <Student> allStudents = studentService.findAllStudents();
 
         new Thread(() ->{
-            for(int i = 0; i < allStudents.size(); i++) {
-                if(i%2 != 0)
-                {
-                    studentService.printSynchronized(allStudents.get(i).getName());
-                }
-            }
+            studentService.printSynchronized(allStudents.get(0).getName());
+            studentService.printSynchronized(allStudents.get(1).getName());
+          }).start();
+
+        new Thread(() ->{
+            studentService.printSynchronized(allStudents.get(2).getName());
+            studentService.printSynchronized(allStudents.get(3).getName());
         }).start();
 
         new Thread(() ->{
-            for(int i = 0; i < allStudents.size(); i=i+2) {
-            studentService.printSynchronized(allStudents.get(i).getName());
-         }
+            studentService.printSynchronized(allStudents.get(4).getName());
+            studentService.printSynchronized(allStudents.get(5).getName());
         }).start();
 
 
